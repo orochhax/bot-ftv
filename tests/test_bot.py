@@ -5,6 +5,7 @@ from src.collectors.shopee import build_shopee_auth_header
 from src.config import load_rules
 from src.db import TZ, Database
 from src.filters import filter_offers
+from src.manual_bot import parse_postar_command
 from src.models import Offer
 from src.telegram import format_offer_html
 
@@ -103,3 +104,21 @@ def test_telegram_html_escapes_special_chars():
     assert "&lt;FT-5&gt; &amp; Rede" in msg
     assert "R$ 289,90" in msg
     assert "-26% OFF" in msg
+
+
+def test_parse_postar_command_with_and_without_old_price():
+    offer = parse_postar_command(
+        "/postar Bola Mikasa FT-5 Oficial | 289,90 | 389,90 | https://mercadolivre.com/sec/abc123"
+    )
+    assert offer.store == "mercadolivre"
+    assert offer.price == 289.90
+    assert offer.old_price == 389.90
+    assert offer.discount_pct == 26
+
+    offer2 = parse_postar_command(
+        "/postar Rede Futevôlei | 149.90 | https://amzn.to/xyz",
+        photo_file_id="FILE123",
+    )
+    assert offer2.store == "amazon"
+    assert offer2.old_price is None
+    assert offer2.image_url == "FILE123"

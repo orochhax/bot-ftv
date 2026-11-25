@@ -1,6 +1,7 @@
 import argparse
 from datetime import datetime
 import logging
+import threading
 import time
 
 from src.collectors.amazon import AmazonCollector
@@ -9,6 +10,7 @@ from src.collectors.shopee import ShopeeCollector
 from src.config import Settings, load_rules, load_settings
 from src.db import TZ, Database
 from src.filters import filter_offers
+from src.manual_bot import run_admin_listener
 from src.models import Offer
 from src.telegram import TelegramPublisher, format_offer_html
 
@@ -175,11 +177,23 @@ def main() -> None:
                 settings.active_start_hour, settings.active_start_minute,
                 settings.active_end_hour, settings.active_end_minute)
 
+    if publisher is not None:
+        listener = threading.Thread(
+            target=run_admin_listener,
+            args=(settings, db, publisher),
+            daemon=True,
+            name="telegram-admin-listener",
+        )
+        listener.start()
+
     while True:
-        if is_within_active_window(settings):
-            run_cycle(settings, db, publisher, failure_streaks, dry_run=False)
+        if build_collectors(settings):
+            if is_within_active_window(settings):
+                run_cycle(settings, db, publisher, failure_streaks, dry_run=False)
+            else:
+                logger.info("Fora da janela ativa; aguardando proximo ciclo.")
         else:
-            logger.info("Fora da janela ativa; aguardando proximo ciclo.")
+            logger.info("Nenhuma loja automatica ativa; operando em modo /postar manual.")
         time.sleep(settings.poll_interval_minutes * 60)
 
 
