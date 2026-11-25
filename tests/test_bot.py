@@ -100,10 +100,12 @@ def test_telegram_html_escapes_special_chars():
         old_price=389.90,
         url="https://example.com/item?a=1&b=2",
     )
-    msg = format_offer_html(offer, variant_index=0)
+    msg = format_offer_html(offer, variant_index=0, channel_invite_url="https://t.me/achadosftv")
     assert "&lt;FT-5&gt; &amp; Rede" in msg
     assert "R$ 289,90" in msg
     assert "-26% OFF" in msg
+    assert "🔗 Link do produto:" in msg
+    assert "👉 Compartilhe com os amigos:\nhttps://t.me/achadosftv" in msg
 
 
 def test_parse_postar_command_with_and_without_old_price():

@@ -7,13 +7,6 @@ from src.models import Offer
 
 logger = logging.getLogger(__name__)
 
-HEADERS = [
-    "🔥 OFERTA NA AREIA",
-    "⚡ BAIXOU O PREÇO",
-    "🏐 ACHADO DE FUTEVÔLEI",
-    "💥 PROMOÇÃO RELÂMPAGO",
-]
-
 STORE_LABELS = {
     "mercadolivre": "Mercado Livre",
     "shopee": "Shopee",
@@ -25,36 +18,58 @@ def format_brl(value: float) -> str:
     return f"R$ {value:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
-def format_offer_html(offer: Offer, variant_index: int = 0) -> str:
-    header = HEADERS[variant_index % len(HEADERS)]
+def format_offer_html(offer: Offer, variant_index: int = 0, channel_invite_url: str = "") -> str:
     title = html.escape(offer.title[:160])
     store_name = STORE_LABELS.get(offer.store, offer.store.title())
     safe_url = html.escape(offer.url, quote=True)
 
-    lines = [f"<b>{header}</b>", "", f"<b>{title}</b>", ""]
+    lines = [
+        f"🔥 <b>{title}</b>",
+        "",
+        f"- {html.escape(store_name)}",
+        "",
+    ]
     if offer.old_price and offer.old_price > offer.price and offer.discount_pct > 0:
         lines.append(
-            f"De <s>{format_brl(offer.old_price)}</s> por <b>{format_brl(offer.price)}</b> "
+            f"💰 De <s>{format_brl(offer.old_price)}</s> por <b>{format_brl(offer.price)}</b> "
             f"(<b>-{offer.discount_pct}% OFF</b>)"
         )
     else:
-        lines.append(f"Por apenas <b>{format_brl(offer.price)}</b>")
+        lines.append(f"💰 <b>{format_brl(offer.price)}</b>")
 
     lines.extend(
         [
-            f"Loja: {html.escape(store_name)}",
             "",
-            f'👉 <a href="{safe_url}">Ver oferta agora</a>',
+            "🔗 Link do produto:",
+            safe_url,
         ]
     )
+
+    if channel_invite_url:
+        safe_invite = html.escape(channel_invite_url.strip(), quote=True)
+        lines.extend(
+            [
+                "",
+                "👉 Compartilhe com os amigos:",
+                safe_invite,
+            ]
+        )
+
     return "\n".join(lines)
 
 
 class TelegramPublisher:
-    def __init__(self, bot_token: str, channel_id: str, admin_chat_id: str = "") -> None:
+    def __init__(
+        self,
+        bot_token: str,
+        channel_id: str,
+        admin_chat_id: str = "",
+        channel_invite_url: str = "",
+    ) -> None:
         self.bot_token = bot_token
         self.channel_id = channel_id
         self.admin_chat_id = admin_chat_id
+        self.channel_invite_url = channel_invite_url
         self.base_url = f"https://api.telegram.org/bot{bot_token}"
 
     def _post(self, method: str, payload: dict) -> dict:
@@ -67,7 +82,11 @@ class TelegramPublisher:
             return data
 
     def send_offer(self, offer: Offer, variant_index: int = 0) -> None:
-        caption = format_offer_html(offer, variant_index=variant_index)
+        caption = format_offer_html(
+            offer,
+            variant_index=variant_index,
+            channel_invite_url=self.channel_invite_url,
+        )
         if offer.image_url:
             try:
                 self._post(

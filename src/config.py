@@ -26,6 +26,7 @@ class Settings:
     telegram_bot_token: str
     telegram_channel_id: str
     telegram_admin_chat_id: str
+    channel_invite_url: str
 
     enable_mercadolivre: bool
     enable_shopee: bool
@@ -66,6 +67,7 @@ def load_settings(env_file: str | None = None) -> Settings:
         telegram_bot_token=os.getenv("TELEGRAM_BOT_TOKEN", "").strip(),
         telegram_channel_id=os.getenv("TELEGRAM_CHANNEL_ID", "").strip(),
         telegram_admin_chat_id=os.getenv("TELEGRAM_ADMIN_CHAT_ID", "").strip(),
+        channel_invite_url=os.getenv("CHANNEL_INVITE_URL", "").strip(),
         enable_mercadolivre=_env_bool("ENABLE_MERCADOLIVRE", True),
         enable_shopee=_env_bool("ENABLE_SHOPEE", False),
         enable_amazon=_env_bool("ENABLE_AMAZON", False),

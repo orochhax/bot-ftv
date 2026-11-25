@@ -149,6 +149,7 @@ def main() -> None:
             bot_token=settings.telegram_bot_token,
             channel_id=settings.telegram_channel_id,
             admin_chat_id=settings.telegram_admin_chat_id,
+            channel_invite_url=settings.channel_invite_url,
         )
         if settings.telegram_bot_token and settings.telegram_channel_id
         else None
