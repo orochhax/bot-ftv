@@ -1,0 +1,71 @@
+{
+  "min_discount_pct": 15,
+  "global_blacklist": [
+    "adesivo",
+    "chaveiro",
+    "miniatura",
+    "usado",
+    "usada",
+    "seminovo",
+    "seminova",
+    "capa de celular",
+    "capinha",
+    "caneca",
+    "quadro decorativo",
+    "infantil brinquedo",
+    "pelucia",
+    "replica",
+    "primeira linha"
+  ],
+  "categories": [
+    {
+      "name": "Bolas de Futevolei",
+      "keywords": [
+        "mikasa ft-5",
+        "mikasa futevolei",
+        "bola futevolei oficial",
+        "bola futevolei penalty",
+        "bola futevolei vulcanizada"
+      ],
+      "min_price": 150.0,
+      "max_price": 480.0,
+      "promo_ceiling": 349.9
+    },
+    {
+      "name": "Quadra e Treino",
+      "keywords": [
+        "rede futevolei",
+        "fita marcacao quadra areia",
+        "marcacao futevolei",
+        "bomba de ar bola agulha"
+      ],
+      "min_price": 25.0,
+      "max_price": 650.0,
+      "promo_ceiling": 180.0
+    },
+    {
+      "name": "Vestuario de Areia",
+      "keywords": [
+        "sunga futevolei",
+        "bermuda futevolei",
+        "regata futevolei",
+        "viseira esportiva areia"
+      ],
+      "min_price": 35.0,
+      "max_price": 260.0,
+      "promo_ceiling": 110.0
+    },
+    {
+      "name": "Acessorios de Areia",
+      "keywords": [
+        "oculos esportivo uv400",
+        "protetor solar esportivo",
+        "mochila saco areia",
+        "bolsa esportiva areia"
+      ],
+      "min_price": 30.0,
+      "max_price": 320.0,
+      "promo_ceiling": 120.0
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+services:
+  bot-ftv:
+    build: .
+    container_name: bot-ftv
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config:ro
+    environment:
+      - TZ=America/Sao_Paulo
